@@ -1,0 +1,47 @@
+specVersion: 0.0.1
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: Location
+    network: rinkeby
+    source:
+      address: "0x6d610C26d2f61fB5c279a685200A42cD877cd931"
+      abi: Location
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - CheckIn
+        - LocationCreated
+        - LocationHidden
+        - LocationRevealed
+        - LocationUnverified
+        - LocationVerified
+        - UserCreated
+        - UserFlagSet
+        - UserPossiblyFlagged
+      abis:
+        - name: Location
+          file: ./abis/Location.json
+      eventHandlers:
+        - event: CheckIn(uint256,address)
+          handler: handleCheckIn
+        - event: LocationCreated(uint256)
+          handler: handleLocationCreated
+        - event: LocationHidden(uint256)
+          handler: handleLocationHidden
+        - event: LocationRevealed(uint256)
+          handler: handleLocationRevealed
+        - event: LocationUnverified(uint256)
+          handler: handleLocationUnverified
+        - event: LocationVerified(uint256)
+          handler: handleLocationVerified
+        - event: UserCreated(address)
+          handler: handleUserCreated
+        - event: UserFlagSet(address,bool)
+          handler: handleUserFlagSet
+        - event: UserPossiblyFlagged(address,address,uint256,uint256)
+          handler: handleUserPossiblyFlagged
+      file: ./src/mapping.ts
