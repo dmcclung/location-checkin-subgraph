@@ -11,7 +11,7 @@ import {
   UserFlagSet,
   UserPossiblyFlagged
 } from "../generated/Location/Location"
-import { ExampleEntity } from "../generated/schema"
+import { LocationEntity } from "../generated/schema"
 
 export function handleCheckIn(event: CheckIn): void {
   // Entities can be loaded from the store using a string ID; this ID
@@ -56,7 +56,28 @@ export function handleCheckIn(event: CheckIn): void {
   // - contract.getLocation(...)
 }
 
-export function handleLocationCreated(event: LocationCreated): void {}
+export function handleLocationCreated(event: LocationCreated): void {
+  const ID = event.params.locationId.toString()
+  
+  let entity = LocationEntity.load(ID)
+
+  if (!entity) {
+    const contract = Location.bind(event.address)
+    const location = contract.getLocation(event.params.locationId)
+    
+    entity = new LocationEntity(ID)
+    entity.lat = location.lat
+    entity.lon = location.lon
+    entity.nS = location.nS
+    entity.eW = location.eW
+    // TODO: Pull up location details from contract
+    // set them on entity and save
+    // Entity fields can be set using simple assignments
+    locEntity. = BigInt.fromI32(0)
+  }
+
+  locEntity.save()
+}
 
 export function handleLocationHidden(event: LocationHidden): void {}
 

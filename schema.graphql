@@ -1,6 +1,12 @@
-type ExampleEntity @entity {
+type LocationEntity @entity {
   id: ID!
-  count: BigInt!
-  locationId: BigInt! # uint256
-  user: Bytes! # address
+  lat: BigInt!
+  nS: String!
+  lon: BigInt!
+  eW: String!
+  name: String!
+  description: String!
+  imageUrl: String!
+  verified: Boolean!
+  hide: Boolean!
 }

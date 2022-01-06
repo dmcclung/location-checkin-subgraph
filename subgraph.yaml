@@ -13,15 +13,7 @@ dataSources:
       apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
-        - CheckIn
-        - LocationCreated
-        - LocationHidden
-        - LocationRevealed
-        - LocationUnverified
-        - LocationVerified
-        - UserCreated
-        - UserFlagSet
-        - UserPossiblyFlagged
+        - Location
       abis:
         - name: Location
           file: ./abis/Location.json
