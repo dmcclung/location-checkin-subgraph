@@ -1,4 +1,4 @@
-type LocationEntity @entity {
+type Location @entity {
   id: ID!
   lat: BigInt!
   nS: String!
@@ -9,4 +9,26 @@ type LocationEntity @entity {
   imageUrl: String!
   verified: Boolean!
   hide: Boolean!
+}
+
+type Drop @entity {
+  id: ID!
+  user: Bytes!
+  verifier: Bytes!
+  locationId: BigInt!
+  message: String!
+  blockNumber: BigInt!
+}
+
+type User @entity {
+  id: ID!
+  dropPoints: BigInt!
+  lastBlockAwarded: BigInt!
+}
+
+type Proof @entity {
+  id: ID!
+  user: Bytes!
+  proofUri: String!
+  dropId: BigInt!
 }

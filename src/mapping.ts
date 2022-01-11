@@ -1,94 +1,67 @@
-import { BigInt } from "@graphprotocol/graph-ts"
 import {
-  Location,
-  CheckIn,
-  LocationCreated,
-  LocationHidden,
-  LocationRevealed,
-  LocationUnverified,
-  LocationVerified,
-  UserCreated,
-  UserFlagSet,
-  UserPossiblyFlagged
-} from "../generated/Location/Location"
-import { LocationEntity } from "../generated/schema"
+  LocationDrop as LocationContract,
+  LocationUpdated,
+  UserUpdated,
+  DropMinted,
+  DropClaimed,
+  ProofCreated
+} from "../generated/LocationDrop/LocationDrop"
+import { Location, Proof, User, Drop } from "../generated/schema"
 
-export function handleCheckIn(event: CheckIn): void {
-  // Entities can be loaded from the store using a string ID; this ID
-  // needs to be unique across all entities of the same type
-  let entity = ExampleEntity.load(event.transaction.from.toHex())
+export function handleLocationUpdated(event: LocationUpdated): void {
+  const contract = LocationContract.bind(event.address)
+  const location = contract.getLocation(event.params.locationId)
 
-  // Entities only exist after they have been saved to the store;
-  // `null` checks allow to create entities on demand
-  if (!entity) {
-    entity = new ExampleEntity(event.transaction.from.toHex())
+  const entity = new Location(event.params.locationId.toString())
+  entity.lat = location.lat
+  entity.lon = location.lon
+  entity.nS = location.nS
+  entity.eW = location.eW
+  entity.name = location.name
+  entity.description = location.description
+  entity.imageUrl = location.imageUrl
+  entity.verified = location.verified
+  entity.hide = location.hide
 
-    // Entity fields can be set using simple assignments
-    entity.count = BigInt.fromI32(0)
-  }
-
-  // BigInt and BigDecimal math are supported
-  entity.count = entity.count + BigInt.fromI32(1)
-
-  // Entity fields can be set based on event parameters
-  entity.locationId = event.params.locationId
-  entity.user = event.params.user
-
-  // Entities can be written to the store with `.save()`
   entity.save()
-
-  // Note: If a handler doesn't require existing field values, it is faster
-  // _not_ to load the entity from the store. Instead, create it fresh with
-  // `new Entity(...)`, set the fields that should be updated and save the
-  // entity back to the store. Fields that were not set or unset remain
-  // unchanged, allowing for partial updates to be applied.
-
-  // It is also possible to access smart contracts from mappings. For
-  // example, the contract that has emitted the event can be connected to
-  // with:
-  //
-  // let contract = Contract.bind(event.address)
-  //
-  // The following functions can then be called on this contract to access
-  // state variables and other data:
-  //
-  // - contract.createLocation(...)
-  // - contract.getLocation(...)
 }
 
-export function handleLocationCreated(event: LocationCreated): void {
-  const ID = event.params.locationId.toString()
-  
-  let entity = LocationEntity.load(ID)
+export function handleUserUpdated(event: UserUpdated): void {
+  const contract = LocationContract.bind(event.address)
+  const user = contract.getUser(event.params.user)
 
-  if (!entity) {
-    const contract = Location.bind(event.address)
-    const location = contract.getLocation(event.params.locationId)
-    
-    entity = new LocationEntity(ID)
-    entity.lat = location.lat
-    entity.lon = location.lon
-    entity.nS = location.nS
-    entity.eW = location.eW
-    // TODO: Pull up location details from contract
-    // set them on entity and save
-    // Entity fields can be set using simple assignments
-    locEntity. = BigInt.fromI32(0)
+  const entity = new User(event.params.user.toHexString())
+  entity.lastBlockAwarded = user.lastBlockAwarded
+  entity.dropPoints = user.dropPoints
+  entity.save()
+}
+
+export function handleDropMinted(event: DropMinted): void {
+  const contract = LocationContract.bind(event.address)
+  const drop = contract.getDrop(event.params.dropId)
+
+  const entity = new Drop(event.params.dropId.toString())
+  entity.message = drop.message
+  entity.user = drop.user
+  entity.verifier = drop.verifier
+  entity.blockNumber = drop.blockNumber
+  entity.locationId = drop.locationId
+  entity.save()
+}
+
+export function handleDropClaimed(event: DropClaimed): void {
+  const entity = Drop.load(event.params.dropId.toString())
+  if (entity) {
+    entity.verifier = event.params.user
+    entity.save();
   }
-
-  locEntity.save()
 }
 
-export function handleLocationHidden(event: LocationHidden): void {}
+export function handleProofCreated(event: ProofCreated): void {
+  const entity = new Proof(event.transaction.hash.toHexString());
+  entity.proofUri = event.params.proofUri;
+  entity.user = event.params.user;
+  entity.dropId = event.params.dropId;
+  entity.save();
+}
 
-export function handleLocationRevealed(event: LocationRevealed): void {}
-
-export function handleLocationUnverified(event: LocationUnverified): void {}
-
-export function handleLocationVerified(event: LocationVerified): void {}
-
-export function handleUserCreated(event: UserCreated): void {}
-
-export function handleUserFlagSet(event: UserFlagSet): void {}
-
-export function handleUserPossiblyFlagged(event: UserPossiblyFlagged): void {}
