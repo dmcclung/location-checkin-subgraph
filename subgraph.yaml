@@ -6,7 +6,7 @@ dataSources:
     name: LocationDrop
     network: rinkeby
     source:
-      address: "0xA178A0A7610d891E21beF7DD8Ef92ED3373977D9"
+      address: "0x10312aCDAAA86AAeB953A671bfdd17530c872459"
       abi: LocationDrop
     mapping:
       kind: ethereum/events
